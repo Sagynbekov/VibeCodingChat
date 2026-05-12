@@ -65,4 +65,4 @@ A real-time web chat application.
 
 ## YouTube Demo
 
-(Empty)
+https://youtu.be/du7WoSLgiiQ
