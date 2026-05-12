@@ -27,7 +27,8 @@ export const createUser = async (nickname: string, password: string): Promise<Us
         body: JSON.stringify({ nickname, password }),
     });
     if (!response.ok) {
-        throw new Error('Failed to create user');
+        // Возвращаем сам ответ, чтобы обработать статус в компоненте
+        throw response;
     }
     return response.json();
 };
@@ -41,7 +42,8 @@ export const loginUser = async (nickname: string, password: string): Promise<Use
         body: JSON.stringify({ nickname, password }),
     });
     if (!response.ok) {
-        throw new Error('Failed to login');
+        // Возвращаем сам ответ, чтобы обработать статус в компоненте
+        throw response;
     }
     return response.json();
 };

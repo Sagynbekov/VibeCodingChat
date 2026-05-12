@@ -29,19 +29,22 @@ def create_user(user: schemas.UserCreate):
     db = firebase_config.get_db()
     if not db:
         raise HTTPException(status_code=500, detail="Firebase not connection")
-    
+
+    # Проверка на существующий никнейм
+    users_ref = db.collection("users").where("nickname", "==", user.nickname).limit(1)
+    docs = users_ref.stream()
+    if any(docs):
+        raise HTTPException(status_code=409, detail="Nickname already exists")
+
     user_id = str(uuid.uuid4())
-    # В реальном приложении пароль нужно хешировать!
-    # Например: hashed_password = bcrypt.hash(user.password)
     user_data = {
         "id": user_id,
         "nickname": user.nickname,
-        "password": user.password # В учебных целях храним как есть
+        "password": user.password
     }
     
     db.collection("users").document(user_id).set(user_data)
     
-    # Не возвращаем пароль клиенту
     return schemas.User(id=user_id, nickname=user.nickname)
 
 @app.get("/api/users", response_model=List[schemas.User])

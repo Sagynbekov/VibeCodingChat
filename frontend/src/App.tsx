@@ -28,10 +28,15 @@ export const App = () => {
   };
 
   useEffect(() => {
-    const loggedInUser = localStorage.getItem('vibechat_user');
-    if (loggedInUser) {
-        const user: User = JSON.parse(loggedInUser);
-        setCurrentUser(user);
+    const loggedInUserJSON = localStorage.getItem('vibechat_user');
+    if (loggedInUserJSON && loggedInUserJSON !== 'undefined') {
+        try {
+            const user: User = JSON.parse(loggedInUserJSON);
+            setCurrentUser(user);
+        } catch (e) {
+            console.error("Failed to parse user from localStorage", e);
+            localStorage.removeItem('vibechat_user');
+        }
     }
   }, []);
 

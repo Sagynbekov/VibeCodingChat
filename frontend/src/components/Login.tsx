@@ -21,8 +21,12 @@ export const Login = ({ onLoginSuccess, switchToSignUp }: LoginProps) => {
       const user = await loginUser(nickname, password);
       onLoginSuccess(user);
     } catch (err) {
-      setError('Failed to login. Check your credentials.');
-      console.error(err);
+        if (err instanceof Response && err.status === 401) {
+            setError('Invalid nickname or password.');
+        } else {
+            setError('Failed to login. Please try again.');
+        }
+        console.error(err);
     }
   };
 

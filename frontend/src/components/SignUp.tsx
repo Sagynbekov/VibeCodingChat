@@ -16,11 +16,15 @@ export const SignUp = ({ onSignUpSuccess }: SignUpProps) => {
       return;
     }
     try {
-      await createUser(nickname, password);
-      onSignUpSuccess();
+      const user = await createUser(nickname, password);
+      onSignUpSuccess(user);
     } catch (err) {
-      setError('Failed to create user. Please try again.');
-      console.error(err);
+        if (err instanceof Response && err.status === 409) {
+            setError('Nickname already exists. Please choose another one.');
+        } else {
+            setError('Failed to create user. Please try again.');
+        }
+        console.error(err);
     }
   };
 
