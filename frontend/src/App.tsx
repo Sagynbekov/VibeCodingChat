@@ -105,7 +105,7 @@ export const App = () => {
             </div>
         </div>
       <div className="flex-1 flex flex-col">
-        <ChatWindow messages={filteredMessages} users={users} />
+        <ChatWindow messages={filteredMessages} users={users} currentUser={currentUser} />
         <MessageInput onSendMessage={handleSendMessage} />
       </div>
     </div>
