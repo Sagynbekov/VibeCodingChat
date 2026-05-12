@@ -1,4 +1,4 @@
-import { User, Message } from '../models/types';
+import { User, Message, Group } from '../models/types';
 
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
@@ -58,6 +58,28 @@ export const createMessage = async (sender_id: string, receiver_id: string, cont
   });
   if (!response.ok) {
     throw new Error('Failed to create message');
+  }
+  return response.json();
+};
+
+export const createGroup = async (name: string, members: string[]): Promise<Group> => {
+  const response = await fetch(`${API_BASE_URL}/api/groups`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ name, members }),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create group');
+  }
+  return response.json();
+};
+
+export const getGroups = async (): Promise<Group[]> => {
+  const response = await fetch(`${API_BASE_URL}/api/groups`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch groups');
   }
   return response.json();
 };
