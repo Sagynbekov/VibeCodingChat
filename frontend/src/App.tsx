@@ -86,6 +86,7 @@ export const App = () => {
       return <SignUp onSignUpSuccess={handleAuthSuccess} switchToLogin={() => setAuthPage('login')} />
   }
 
+    const filteredUsers = users.filter(user => user.id !== currentUser?.id);
   const filteredMessages = messages.filter(msg => 
     (msg.sender_id === currentUser?.id && msg.receiver_id === selectedUser?.id) ||
     (msg.sender_id === selectedUser?.id && msg.receiver_id === currentUser?.id)
@@ -94,7 +95,10 @@ export const App = () => {
   return (
     <div className="flex h-screen bg-white">
         <div className="w-1/4 border-r border-gray-200 p-4 flex flex-col">
-            <UserList users={users} onSelectUser={setSelectedUser} selectedUser={selectedUser} />
+            <div className="mb-4">
+                <h2 className="text-xl font-bold">Welcome, {currentUser.nickname}</h2>
+            </div>
+            <UserList users={filteredUsers} onSelectUser={setSelectedUser} selectedUser={selectedUser} />
             <div className="mt-auto">
                 <button 
                     onClick={handleLogout}
