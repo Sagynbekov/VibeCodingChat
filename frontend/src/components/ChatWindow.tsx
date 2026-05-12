@@ -1,6 +1,6 @@
 import { Message, User } from '../models/types';
 import { useRef, useEffect, useState } from 'react';
-import { Settings, Sun, Moon, X, MoreVertical, Smile } from 'lucide-react';
+import { Settings, Sun, Moon, X, MoreVertical } from 'lucide-react';
 
 interface ChatWindowProps {
   messages: Message[];
@@ -16,7 +16,6 @@ const getUserName = (userId: string, users: User[]) => {
 export const ChatWindow = ({ messages, users, currentUser }: ChatWindowProps) => {
   const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
-  const [openReactionsId, setOpenReactionsId] = useState<string | null>(null);
 
   const scrollToBottom = () => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -28,10 +27,6 @@ export const ChatWindow = ({ messages, users, currentUser }: ChatWindowProps) =>
 
   const handleMenuToggle = (messageId: string) => {
     setOpenMenuId(openMenuId === messageId ? null : messageId);
-  };
-
-  const handleReactionsToggle = (messageId: string) => {
-    setOpenReactionsId(openReactionsId === messageId ? null : messageId);
   };
 
   return (
@@ -63,21 +58,6 @@ export const ChatWindow = ({ messages, users, currentUser }: ChatWindowProps) =>
                                         )}
                                     </div>
                                 )}
-                                <div className="relative ml-2">
-                                    <button onClick={() => handleReactionsToggle(msg.id)} className="focus:outline-none">
-                                        <Smile className="h-4 w-4 text-white" />
-                                    </button>
-                                    {openReactionsId === msg.id && (
-                                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 flex p-2 space-x-2">
-                                            <button className="text-2xl">👍</button>
-                                            <button className="text-2xl">❤️</button>
-                                            <button className="text-2xl">😂</button>
-                                            <button className="text-2xl">😮</button>
-                                            <button className="text-2xl">😢</button>
-                                            <button className="text-2xl">🙏</button>
-                                        </div>
-                                    )}
-                                </div>
                             </div>
                         </div>
                         <div className="text-xs text-gray-500 mt-1">
