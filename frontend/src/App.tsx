@@ -15,6 +15,7 @@ export const App = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [authPage, setAuthPage] = useState<AuthPage>('login');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const fetchAllData = async () => {
     try {
@@ -87,9 +88,13 @@ export const App = () => {
   }
 
     const filteredUsers = users.filter(user => user.id !== currentUser?.id);
-  const filteredMessages = messages.filter(msg => 
+  const conversationMessages = messages.filter(msg => 
     (msg.sender_id === currentUser?.id && msg.receiver_id === selectedUser?.id) ||
     (msg.sender_id === selectedUser?.id && msg.receiver_id === currentUser?.id)
+  );
+
+  const searchedMessages = conversationMessages.filter(msg => 
+    msg.content.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -109,7 +114,18 @@ export const App = () => {
             </div>
         </div>
       <div className="flex-1 flex flex-col">
-        <ChatWindow messages={filteredMessages} users={users} currentUser={currentUser} />
+        {selectedUser && (
+            <div className="p-4 border-b border-gray-200">
+                <input
+                    type="text"
+                    placeholder={`Search in chat with ${selectedUser.nickname}...`}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+            </div>
+        )}
+        <ChatWindow messages={searchedMessages} users={users} currentUser={currentUser} />
         <MessageInput onSendMessage={handleSendMessage} />
       </div>
     </div>
