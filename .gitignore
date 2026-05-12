@@ -1,0 +1,44 @@
+# Python / FastAPI
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*build/
+*develop-eggs/
+*dist/
+*eggs/
+*.egg-info/
+*lib/
+*lib64/
+*parts/
+*sdist/
+*var/
+*.egg
+/venv/
+/.venv/
+/env/
+/.env
+/env.bak
+/.env.bak
+
+# Firebase
+serviceAccountKey.json
+
+# Node.js / Vite
+node_modules/
+dist/
+.npm
+npm-debug.log*
+yarn-error.log*
+.env.local
+.env.*.local
+
+# IDE & OS
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+.DS_Store
+Thumbs.db
