@@ -2,22 +2,24 @@ import { useState, useEffect } from 'react';
 import { UserList } from './components/UserList';
 import { ChatWindow } from './components/ChatWindow';
 import { MessageInput } from './components/MessageInput';
+import { SignUp } from './components/SignUp';
+import { Login } from './components/Login';
 import { User, Message } from './models/types';
-import { getUsers, getMessages, createMessage, createUser } from './services/api';
+import { getUsers, getMessages, createMessage } from './services/api';
+
+type AuthPage = 'login' | 'signup';
 
 export const App = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [authPage, setAuthPage] = useState<AuthPage>('login');
 
   const fetchAllData = async () => {
     try {
         const usersData = await getUsers();
         setUsers(usersData);
-        if (usersData.length > 0 && !selectedUser) {
-            setSelectedUser(usersData[0]);
-        }
-
+        
         const messagesData = await getMessages();
         setMessages(messagesData);
     } catch (error) {
@@ -26,46 +28,67 @@ export const App = () => {
   };
 
   useEffect(() => {
-    fetchAllData();
-    // Poll for new data every 5 seconds as a simple real-time mechanism
-    const intervalId = setInterval(fetchAllData, 5000);
-    return () => clearInterval(intervalId);
+    const loggedInUser = localStorage.getItem('vibechat_user');
+    if (loggedInUser) {
+        const user: User = JSON.parse(loggedInUser);
+        setCurrentUser(user);
+    }
   }, []);
 
+
+  useEffect(() => {
+    if (currentUser) {
+        fetchAllData();
+        const intervalId = setInterval(fetchAllData, 5000);
+        return () => clearInterval(intervalId);
+    }
+  }, [currentUser]);
+
   const handleSendMessage = async (text: string) => {
-    if (!selectedUser) {
-        alert("Please select a user to send a message.");
+    if (!currentUser) {
+        alert("Please log in to send a message.");
         return;
     };
     try {
-        await createMessage(selectedUser.id, text);
-        // Refetch messages to show the new one
+        await createMessage(currentUser.id, text);
         const messagesData = await getMessages();
         setMessages(messagesData);
     } catch (error) {
         console.error("Failed to send message:", error);
     }
   };
-  
-  // Simple user creation for demonstration
-  useEffect(() => {
-    const setupUsers = async () => {
-        const currentUsers = await getUsers();
-        if (currentUsers.length === 0) {
-            await createUser("Alice");
-            await createUser("Bob");
-            const usersData = await getUsers();
-            setUsers(usersData);
-            setSelectedUser(usersData[0]);
-        }
-    }
-    setupUsers();
-  }, []);
 
+  const handleAuthSuccess = (user: User) => {
+      localStorage.setItem('vibechat_user', JSON.stringify(user));
+      setCurrentUser(user);
+  }
+
+  const handleLogout = () => {
+      localStorage.removeItem('vibechat_user');
+      setCurrentUser(null);
+      setAuthPage('login');
+  }
+
+  if (!currentUser) {
+      if (authPage === 'login') {
+          return <Login onLoginSuccess={handleAuthSuccess} switchToSignUp={() => setAuthPage('signup')} />
+      }
+      return <SignUp onSignUpSuccess={handleAuthSuccess} switchToLogin={() => setAuthPage('login')} />
+  }
 
   return (
     <div className="flex h-screen bg-white">
-      <UserList users={users} onSelectUser={setSelectedUser} selectedUser={selectedUser} />
+        <div className="w-1/4 border-r border-gray-200 p-4 flex flex-col">
+            <UserList users={users} onSelectUser={() => {}} selectedUser={currentUser} />
+            <div className="mt-auto">
+                <button 
+                    onClick={handleLogout}
+                    className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                    Logout
+                </button>
+            </div>
+        </div>
       <div className="flex-1 flex flex-col">
         <ChatWindow messages={messages} users={users} />
         <MessageInput onSendMessage={handleSendMessage} />

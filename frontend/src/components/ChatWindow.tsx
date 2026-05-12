@@ -7,7 +7,7 @@ interface ChatWindowProps {
 
 const getUserName = (userId: string, users: User[]) => {
     const user = users.find(u => u.id === userId);
-    return user ? user.name : 'Unknown User';
+    return user ? user.nickname : 'Unknown User';
 }
 
 export const ChatWindow = ({ messages, users }: ChatWindowProps) => {

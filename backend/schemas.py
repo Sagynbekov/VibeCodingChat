@@ -3,10 +3,10 @@ from typing import Optional, List
 from datetime import datetime
 
 class UserBase(BaseModel):
-    username: str
+    nickname: str
 
 class UserCreate(UserBase):
-    pass
+    password: str
 
 class User(UserBase):
     id: str

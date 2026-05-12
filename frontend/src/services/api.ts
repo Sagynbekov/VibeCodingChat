@@ -3,7 +3,7 @@ import { User, Message } from '../models/types';
 const API_BASE_URL = 'http://127.0.0.1:8000';
 
 export const getUsers = async (): Promise<User[]> => {
-  const response = await fetch(`${API_BASE_URL}/users`);
+  const response = await fetch(`${API_BASE_URL}/api/users`);
   if (!response.ok) {
     throw new Error('Failed to fetch users');
   }
@@ -11,20 +11,20 @@ export const getUsers = async (): Promise<User[]> => {
 };
 
 export const getMessages = async (): Promise<Message[]> => {
-  const response = await fetch(`${API_BASE_URL}/messages`);
+  const response = await fetch(`${API_BASE_URL}/api/messages`);
   if (!response.ok) {
     throw new Error('Failed to fetch messages');
   }
   return response.json();
 };
 
-export const createUser = async (name: string): Promise<User> => {
-    const response = await fetch(`${API_BASE_URL}/users`, {
+export const createUser = async (nickname: string, password: string): Promise<User> => {
+    const response = await fetch(`${API_BASE_URL}/api/users`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ nickname, password }),
     });
     if (!response.ok) {
         throw new Error('Failed to create user');
@@ -32,9 +32,22 @@ export const createUser = async (name: string): Promise<User> => {
     return response.json();
 };
 
+export const loginUser = async (nickname: string, password: string): Promise<User> => {
+    const response = await fetch(`${API_BASE_URL}/api/login`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ nickname, password }),
+    });
+    if (!response.ok) {
+        throw new Error('Failed to login');
+    }
+    return response.json();
+};
 
 export const createMessage = async (user_id: string, text: string): Promise<Message> => {
-  const response = await fetch(`${API_BASE_URL}/messages`, {
+  const response = await fetch(`${API_BASE_URL}/api/messages`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

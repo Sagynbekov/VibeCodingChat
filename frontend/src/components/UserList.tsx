@@ -19,7 +19,7 @@ export const UserList = ({ users, onSelectUser, selectedUser }: UserListProps) =
             }`}
             onClick={() => onSelectUser(user)}
           >
-            {user.name}
+            {user.nickname}
           </li>
         ))}
       </ul>

@@ -31,11 +31,51 @@ def create_user(user: schemas.UserCreate):
         raise HTTPException(status_code=500, detail="Firebase not connection")
     
     user_id = str(uuid.uuid4())
-    user_data = user.dict()
-    user_data["id"] = user_id
+    # В реальном приложении пароль нужно хешировать!
+    # Например: hashed_password = bcrypt.hash(user.password)
+    user_data = {
+        "id": user_id,
+        "nickname": user.nickname,
+        "password": user.password # В учебных целях храним как есть
+    }
     
     db.collection("users").document(user_id).set(user_data)
-    return user_data
+    
+    # Не возвращаем пароль клиенту
+    return schemas.User(id=user_id, nickname=user.nickname)
+
+@app.get("/api/users", response_model=List[schemas.User])
+def get_users():
+    db = firebase_config.get_db()
+    if not db:
+        return []
+    
+    docs = db.collection("users").stream()
+    users = []
+    for doc in docs:
+        data = doc.to_dict()
+        # Убедимся, что возвращаем только нужные поля, без пароля
+        users.append(schemas.User(id=data.get("id"), nickname=data.get("nickname")))
+    return users
+
+@app.post("/api/login", response_model=schemas.User)
+def login_user(user: schemas.UserCreate):
+    db = firebase_config.get_db()
+    if not db:
+        raise HTTPException(status_code=500, detail="Firebase not connection")
+
+    users_ref = db.collection("users").where("nickname", "==", user.nickname).limit(1)
+    docs = users_ref.stream()
+    
+    found_user = None
+    for doc in docs:
+        found_user = doc.to_dict()
+        break
+
+    if not found_user or found_user.get("password") != user.password:
+        raise HTTPException(status_code=401, detail="Invalid nickname or password")
+
+    return schemas.User(id=found_user.get("id"), nickname=found_user.get("nickname"))
 
 @app.get("/api/messages", response_model=List[schemas.Message])
 def get_messages():
