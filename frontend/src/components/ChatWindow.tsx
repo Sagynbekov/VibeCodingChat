@@ -1,5 +1,6 @@
 import { Message, User } from '../models/types';
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
+import { Settings, Sun, Moon, X, MoreVertical, Smile } from 'lucide-react';
 
 interface ChatWindowProps {
   messages: Message[];
@@ -14,6 +15,8 @@ const getUserName = (userId: string, users: User[]) => {
 
 export const ChatWindow = ({ messages, users, currentUser }: ChatWindowProps) => {
   const endOfMessagesRef = useRef<null | HTMLDivElement>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+  const [openReactionsId, setOpenReactionsId] = useState<string | null>(null);
 
   const scrollToBottom = () => {
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -22,6 +25,14 @@ export const ChatWindow = ({ messages, users, currentUser }: ChatWindowProps) =>
   useEffect(() => {
     scrollToBottom()
   }, [messages]);
+
+  const handleMenuToggle = (messageId: string) => {
+    setOpenMenuId(openMenuId === messageId ? null : messageId);
+  };
+
+  const handleReactionsToggle = (messageId: string) => {
+    setOpenReactionsId(openReactionsId === messageId ? null : messageId);
+  };
 
   return (
     <div className="flex-1 p-4 flex flex-col">
@@ -36,8 +47,38 @@ export const ChatWindow = ({ messages, users, currentUser }: ChatWindowProps) =>
                         <div className="font-bold text-sm mb-1">
                             {getUserName(msg.sender_id, users)}
                         </div>
-                        <div className={`rounded-lg p-3 max-w-xs lg:max-w-md ${messageBg}`}>
+                        <div className={`relative group rounded-lg p-3 max-w-xs lg:max-w-md ${messageBg}`}>
                             <p>{msg.content}</p>
+                            <div className="absolute top-0 right-0 mt-1 mr-1 flex items-center">
+                                {isCurrentUser && (
+                                    <div className="relative">
+                                        <button onClick={() => handleMenuToggle(msg.id)} className="focus:outline-none">
+                                            <MoreVertical className="h-4 w-4 text-white" />
+                                        </button>
+                                        {openMenuId === msg.id && (
+                                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10">
+                                                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Edit</a>
+                                                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Delete</a>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                                <div className="relative ml-2">
+                                    <button onClick={() => handleReactionsToggle(msg.id)} className="focus:outline-none">
+                                        <Smile className="h-4 w-4 text-white" />
+                                    </button>
+                                    {openReactionsId === msg.id && (
+                                        <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 flex p-2 space-x-2">
+                                            <button className="text-2xl">👍</button>
+                                            <button className="text-2xl">❤️</button>
+                                            <button className="text-2xl">😂</button>
+                                            <button className="text-2xl">😮</button>
+                                            <button className="text-2xl">😢</button>
+                                            <button className="text-2xl">🙏</button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                         <div className="text-xs text-gray-500 mt-1">
                             {new Date(msg.timestamp).toLocaleTimeString()}

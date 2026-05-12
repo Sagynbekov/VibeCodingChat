@@ -6,6 +6,7 @@ import { SignUp } from './components/SignUp';
 import { Login } from './components/Login';
 import { User, Message } from './models/types';
 import { getUsers, getMessages, createMessage } from './services/api';
+import { Settings, Sun, Moon, X, Users as GroupIcon } from 'lucide-react';
 
 type AuthPage = 'login' | 'signup';
 
@@ -16,6 +17,15 @@ export const App = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [authPage, setAuthPage] = useState<AuthPage>('login');
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+  const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
+
+  const handleUserSelection = (userId: string) => {
+    setSelectedUsers(prev => 
+      prev.includes(userId) ? prev.filter(id => id !== userId) : [...prev, userId]
+    );
+  };
 
   const fetchAllData = async () => {
     try {
@@ -100,9 +110,91 @@ export const App = () => {
   return (
     <div className="flex h-screen bg-white">
         <div className="w-1/4 bg-gray-50 border-r border-gray-200 p-4 flex flex-col">
-            <div className="p-4 bg-white rounded-lg shadow-sm mb-4">
+            <div className="p-4 bg-white rounded-lg shadow-sm mb-4 flex justify-between items-center">
                 <h2 className="text-lg font-semibold text-gray-800">Welcome, <span className="text-blue-600">{currentUser.nickname}</span></h2>
+                <div className="flex items-center space-x-2">
+                    <button onClick={() => setIsGroupModalOpen(true)} className="focus:outline-none">
+                        <GroupIcon className="h-6 w-6" />
+                    </button>
+                    <button onClick={() => setIsSettingsOpen(true)} className="focus:outline-none">
+                        <Settings className="h-6 w-6" />
+                    </button>
+                </div>
             </div>
+
+            {isSettingsOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white rounded-lg p-8 max-w-sm w-full">
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-lg font-bold">Settings</h2>
+                            <button onClick={() => setIsSettingsOpen(false)} className="focus:outline-none">
+                                <X className="h-6 w-6" />
+                            </button>
+                        </div>
+                        <div className="space-y-6">
+                            <div>
+                                <h3 className="font-semibold mb-2">Theme</h3>
+                                <div className="flex items-center space-x-4">
+                                    <button className="flex items-center space-x-2 p-2 rounded-md border w-full justify-center">
+                                        <Sun className="h-5 w-5" />
+                                        <span>Light</span>
+                                    </button>
+                                    <button className="flex items-center space-x-2 p-2 rounded-md border w-full justify-center bg-gray-800 text-white">
+                                        <Moon className="h-5 w-5" />
+                                        <span>Dark</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 className="font-semibold mb-2">Avatar</h3>
+                                <div className="flex items-center space-x-4">
+                                    <div className="w-16 h-16 rounded-full bg-gray-300"></div>
+                                    <button className="font-semibold">Change Avatar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {isGroupModalOpen && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div className="bg-white rounded-lg p-8 max-w-md w-full">
+                    <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-lg font-bold">Create a Group</h2>
+                    <button onClick={() => setIsGroupModalOpen(false)} className="focus:outline-none">
+                        <X className="h-6 w-6" />
+                    </button>
+                    </div>
+                    <div className="space-y-4 mb-6" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+                    {users.map(user => (
+                        <div key={user.id} className="flex items-center">
+                        <input
+                            type="checkbox"
+                            id={`user-${user.id}`}
+                            checked={selectedUsers.includes(user.id)}
+                            onChange={() => handleUserSelection(user.id)}
+                            className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <label htmlFor={`user-${user.id}`} className="ml-3 text-sm font-medium text-gray-700">
+                            {user.nickname}
+                        </label>
+                        </div>
+                    ))}
+                    </div>
+                    <button 
+                    onClick={() => {
+                        // Logic to create group will be added here
+                        setIsGroupModalOpen(false);
+                    }}
+                    className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition-colors"
+                    >
+                    Create Group
+                    </button>
+                </div>
+                </div>
+            )}
+
             <UserList users={filteredUsers} onSelectUser={setSelectedUser} selectedUser={selectedUser} />
             <div className="mt-auto">
                 <button 
