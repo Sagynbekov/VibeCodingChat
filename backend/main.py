@@ -100,8 +100,11 @@ def send_message(msg: schemas.MessageCreate):
     msg_data = {
         "id": msg_id,
         "sender_id": msg.sender_id,
+        "receiver_id": msg.receiver_id,
         "content": msg.content,
         "timestamp": datetime.utcnow()
     }
+    
     db.collection("messages").document(msg_id).set(msg_data)
-    return msg_data
+    
+    return schemas.Message(**msg_data)

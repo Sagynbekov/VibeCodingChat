@@ -48,13 +48,13 @@ export const loginUser = async (nickname: string, password: string): Promise<Use
     return response.json();
 };
 
-export const createMessage = async (user_id: string, text: string): Promise<Message> => {
+export const createMessage = async (sender_id: string, receiver_id: string, content: string): Promise<Message> => {
   const response = await fetch(`${API_BASE_URL}/api/messages`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ user_id, text }),
+    body: JSON.stringify({ sender_id, receiver_id, content }),
   });
   if (!response.ok) {
     throw new Error('Failed to create message');

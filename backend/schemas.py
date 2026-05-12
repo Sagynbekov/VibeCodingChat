@@ -16,6 +16,7 @@ class User(UserBase):
 
 class MessageBase(BaseModel):
     sender_id: str
+    receiver_id: str
     content: str
 
 class MessageCreate(MessageBase):
@@ -24,6 +25,7 @@ class MessageCreate(MessageBase):
 class Message(BaseModel):
     id: str
     sender_id: str
+    receiver_id: str
     content: str
     timestamp: datetime
 

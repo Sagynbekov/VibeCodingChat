@@ -5,7 +5,8 @@ export interface User {
 
 export interface Message {
   id: string;
-  user_id: string;
-  text: string;
+  sender_id: string;
+  receiver_id: string;
+  content: string;
   timestamp: string; // ISO 8601 date string
 }

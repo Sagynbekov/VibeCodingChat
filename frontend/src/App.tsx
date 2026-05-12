@@ -13,6 +13,7 @@ export const App = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [authPage, setAuthPage] = useState<AuthPage>('login');
 
   const fetchAllData = async () => {
@@ -54,8 +55,12 @@ export const App = () => {
         alert("Please log in to send a message.");
         return;
     };
+    if (!selectedUser) {
+        alert("Please select a user to send a message to.");
+        return;
+    }
     try {
-        await createMessage(currentUser.id, text);
+        await createMessage(currentUser.id, selectedUser.id, text);
         const messagesData = await getMessages();
         setMessages(messagesData);
     } catch (error) {
@@ -81,10 +86,15 @@ export const App = () => {
       return <SignUp onSignUpSuccess={handleAuthSuccess} switchToLogin={() => setAuthPage('login')} />
   }
 
+  const filteredMessages = messages.filter(msg => 
+    (msg.sender_id === currentUser?.id && msg.receiver_id === selectedUser?.id) ||
+    (msg.sender_id === selectedUser?.id && msg.receiver_id === currentUser?.id)
+  );
+
   return (
     <div className="flex h-screen bg-white">
         <div className="w-1/4 border-r border-gray-200 p-4 flex flex-col">
-            <UserList users={users} onSelectUser={() => {}} selectedUser={currentUser} />
+            <UserList users={users} onSelectUser={setSelectedUser} selectedUser={selectedUser} />
             <div className="mt-auto">
                 <button 
                     onClick={handleLogout}
@@ -95,7 +105,7 @@ export const App = () => {
             </div>
         </div>
       <div className="flex-1 flex flex-col">
-        <ChatWindow messages={messages} users={users} />
+        <ChatWindow messages={filteredMessages} users={users} />
         <MessageInput onSendMessage={handleSendMessage} />
       </div>
     </div>

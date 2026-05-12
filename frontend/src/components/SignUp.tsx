@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { createUser } from '../services/api';
+import { User } from '../models/types';
 
 interface SignUpProps {
-  onSignUpSuccess: () => void;
+  onSignUpSuccess: (user: User) => void;
+  switchToLogin: () => void;
 }
 
-export const SignUp = ({ onSignUpSuccess }: SignUpProps) => {
+export const SignUp = ({ onSignUpSuccess, switchToLogin }: SignUpProps) => {
   const [nickname, setNickname] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -26,10 +28,6 @@ export const SignUp = ({ onSignUpSuccess }: SignUpProps) => {
         }
         console.error(err);
     }
-  };
-
-  const switchToLogin = () => {
-    onSignUpSuccess();
   };
 
   return (

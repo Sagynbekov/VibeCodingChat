@@ -8,7 +8,7 @@ interface UserListProps {
 
 export const UserList = ({ users, onSelectUser, selectedUser }: UserListProps) => {
   return (
-    <div className="w-1/4 border-r border-gray-200 p-4">
+    <>
       <h2 className="text-xl font-bold mb-4">Users</h2>
       <ul>
         {users.map((user) => (
@@ -23,6 +23,6 @@ export const UserList = ({ users, onSelectUser, selectedUser }: UserListProps) =
           </li>
         ))}
       </ul>
-    </div>
+    </>
   );
 };

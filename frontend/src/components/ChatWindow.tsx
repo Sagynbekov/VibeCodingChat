@@ -16,8 +16,8 @@ export const ChatWindow = ({ messages, users }: ChatWindowProps) => {
         <div className="flex-1 overflow-y-auto">
             {messages.map((msg) => (
             <div key={msg.id} className="mb-4">
-                <div className="font-bold">{getUserName(msg.user_id, users)}</div>
-                <div>{msg.text}</div>
+                <div className="font-bold">{getUserName(msg.sender_id, users)}</div>
+                <div>{msg.content}</div>
                 <div className="text-xs text-gray-500">
                 {new Date(msg.timestamp).toLocaleTimeString()}
                 </div>
