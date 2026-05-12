@@ -1,0 +1,6 @@
+{
+  "name": "VibeChat - Final Project",
+  "description": "A disciplined chat application with FastAPI backend and React frontend, built for the Vibe Coding final exam.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["Real-time messaging", "User management"]
+}
