@@ -8,14 +8,14 @@ interface UserListProps {
 
 export const UserList = ({ users, onSelectUser, selectedUser }: UserListProps) => {
   return (
-    <>
-      <h2 className="text-xl font-bold mb-4">Users</h2>
+    <div className="bg-white rounded-lg shadow-sm flex-1 overflow-y-auto">
+      <h2 className="text-lg font-semibold text-gray-800 p-4 border-b border-gray-200">Users</h2>
       <ul>
         {users.map((user) => (
           <li
             key={user.id}
-            className={`p-2 cursor-pointer rounded ${
-              selectedUser?.id === user.id ? 'bg-blue-500 text-white' : 'hover:bg-gray-100'
+            className={`p-3 cursor-pointer border-b border-gray-100 transition-colors duration-200 ${
+              selectedUser?.id === user.id ? 'bg-blue-500 text-white' : 'hover:bg-blue-50'
             }`}
             onClick={() => onSelectUser(user)}
           >
@@ -23,6 +23,6 @@ export const UserList = ({ users, onSelectUser, selectedUser }: UserListProps) =
           </li>
         ))}
       </ul>
-    </>
+    </div>
   );
 };

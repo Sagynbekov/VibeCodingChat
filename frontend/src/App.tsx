@@ -94,15 +94,15 @@ export const App = () => {
 
   return (
     <div className="flex h-screen bg-white">
-        <div className="w-1/4 border-r border-gray-200 p-4 flex flex-col">
-            <div className="mb-4">
-                <h2 className="text-xl font-bold">Welcome, {currentUser.nickname}</h2>
+        <div className="w-1/4 bg-gray-50 border-r border-gray-200 p-4 flex flex-col">
+            <div className="p-4 bg-white rounded-lg shadow-sm mb-4">
+                <h2 className="text-lg font-semibold text-gray-800">Welcome, <span className="text-blue-600">{currentUser.nickname}</span></h2>
             </div>
             <UserList users={filteredUsers} onSelectUser={setSelectedUser} selectedUser={selectedUser} />
             <div className="mt-auto">
                 <button 
                     onClick={handleLogout}
-                    className="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                    className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline transition-colors duration-200"
                 >
                     Logout
                 </button>
