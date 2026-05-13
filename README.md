@@ -61,7 +61,7 @@ A real-time web chat application.
 
 ## Live Website
 
-https://vibecodingchat-1.onrender.com
+https://autokorea.onrender.com
 
 ## YouTube Demo
 
